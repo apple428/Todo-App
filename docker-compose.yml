@@ -1,0 +1,51 @@
+services:
+  # PHP/Laravel App Container
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    container_name: todo_app_app
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+    environment:
+      VITE_DEV_SERVER_URL: http://node:5173
+
+  # Apache Web Server Container
+  web:
+    image: httpd:2.4
+    container_name: todo_app_web
+    ports:
+      - "8080:80" # ホストの80番ポートが使用中の場合を考慮し、8080に変更
+    volumes:
+      - ./:/var/www/html
+      - ./docker/apache/default.conf:/usr/local/apache2/conf/httpd.conf # httpd.confを直接マウント
+    depends_on:
+      - app
+      - db
+
+  # MySQL Database Container
+  db:
+    image: mysql:8.0
+    container_name: todo_app_db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: todo_app
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+
+  # Node.js Container (for frontend tasks)
+  node:
+    image: node:20
+    container_name: todo_app_node
+    volumes:
+      - ./:/app
+    working_dir: /app
+    ports:
+      - "5173:5173" # Vite開発サーバーのポートを公開
+    tty: true
