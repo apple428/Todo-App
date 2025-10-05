@@ -36,7 +36,7 @@ Route::get('/dashboard', function (Request $request) {
         $query->orderBy($sortBy, $sortOrder);
     }
 
-    return Inertia::render('Dashboard', [
+    return Inertia::render('Dashboard/index', [
         'todos' => $query->get(),
         'categories' => $request->user()->categories()->get(),
         'filters' => $request->only(['status', 'sort_by', 'sort_order', 'category'])

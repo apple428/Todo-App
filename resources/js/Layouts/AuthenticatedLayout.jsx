@@ -1,14 +1,6 @@
-import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
-
-export default function AuthenticatedLayout({ header, children }) {
-    const user = usePage().props.auth.user;
-
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
-
+export default function AuthenticatedLayout({ user, children }) {
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
             <main>{children}</main>
         </div>
     );
